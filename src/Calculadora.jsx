@@ -1,49 +1,70 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { IconCalculator } from '@tabler/icons-react';
 
-export function Calculadora() {
-    const [Entrada , setEntrada] = useState(null)
-    const [Result , setResult]= useState('')
-    const [valorSelect , setValorSelect]= useState('Mensual')
-    const [valores , setValores]= useState({
-        numeroMinimo: 34700, 
-        excedente: 416220.01/12 
-    })
-    
-    
-  useEffect(() => {
-    switch (valorSelect) {
-      case "Anual":
-        setValores({
-          numeroMinimo: 34700 * 12,
-          excedente: 416220.01,
-        });
-        break;
+const estadoInicial = 'El monto debe ser mayor a RD$ 34,700';
 
-      case "Mensual":
-      default:
-        setValores({
-          numeroMinimo: 34700,
-          excedente: 416220.01 / 12,
-        });
-        break;
+
+
+export function Calculadora() {
+  const [Entrada , setEntrada] = useState(null)
+  const [valorSelect , setValorSelect]= useState('Mensual')
+  const [state, dispatch] = useReducer(reducer, estadoInicial);
+
+  function reducer(state, action) {
+      switch (action.type) {
+        case 'option1':
+          const Impuesto1 = Entrada-(416220.01/12)
+          return `RD$ ${(Impuesto1*0.15).toFixed(2)}`;
+        case "option2":
+            const MontoAdicional = 31216.00/12
+            const Impuesto2 = Entrada-(624329.01/12)
+            return `RD$ ${(Impuesto2*0.20+(MontoAdicional)).toFixed(2)}`;
+        case "option3":
+            const MontoAdicional1 = 79776.00/12
+            const Impuesto3 = Entrada-(867123.01/12)
+            return `RD$ ${(Impuesto3*0.25+(MontoAdicional1)).toFixed(2)}`;
+        default:
+          return state;
+      }
     }
-  }, [valorSelect]);
+    console.log(reducer)
+    console.log(state)
+  // useEffect(() => {
+  //   switch (valorSelect) {
+  //     case "Anual":
+  //       setValores1({
+  //         numeroMinimo: 34700 * 12,
+  //         excedente: 416220.01,
+  //       });
+  //       break;
+
+  //     case "Mensual":
+  //     default:
+  //       setValores1({
+  //         numeroMinimo: 34700,
+  //         excedente: 416220.01 / 12,
+  //       });
+  //       break;
+  //   }
+  // }, [valorSelect]);
 
 
     useEffect(()=>{
-        console.log(valorSelect)
-        const calcularImpuesto = (Entrada)=>{
+        
+  const calcularImpuesto = (Entrada) => {
+    const salario = parseFloat(Entrada);
+    console.log(salario)
+    if (salario >=  416220.01/12 && salario <= 624329.01/12) {
+      dispatch({ type: 'option1', payload: salario });
+    } else if (salario >= 624329.01/12 && salario <= 867123.01/12) {
+      dispatch({ type: 'option2', payload: salario });
+    } else if (salario >= 867123.01/12) {
+      console.log(867123.01/12)
+      dispatch({ type: 'option3', payload: salario });
+    }
+  };
 
-               
-            if(Entrada > valores.numeroMinimo){
-                 const Impuesto = Entrada-valores.excedente
-                return setResult(`RD$ ${(Impuesto*0.15).toFixed(2)}`)
-            }
-             
-            }
-            calcularImpuesto(Entrada)
-
+  calcularImpuesto (Entrada)
     },[Entrada , valorSelect])
 
 
@@ -55,13 +76,13 @@ export function Calculadora() {
                 <h2 className="text-2xl text-center font-mono"> Calculadora</h2>
             </div>
             
-            <h3 className="font-bold opacity-50 text-2xl text-[15px]">Nota: El monto debe ser mayor a {valores.numeroMinimo} sino su sueldo esta excento de impuestos sobre la renta</h3>
+            <h3 className="font-bold opacity-50 text-2xl text-[15px]">Nota: El monto debe ser mayor a 34,700 sino su sueldo esta excento de impuestos sobre la renta</h3>
             <select className="text-gray-400 border-2 border-white rounded p-2 focus:outline-none focus:border-blue-400" name="tipo" value={valorSelect} onChange={e=> setValorSelect(e.target.value)}>
                 <option value="Mensual">Mensual</option>
                 <option value="Anual">Anual</option>
             </select>
             <input className="border-2 rounded p-2 text-[15px] focus:outline-none focus:border-blue-400 " type="number" onChange={e=> setEntrada(e.target.value)}  value={Entrada} placeholder={`Coloque su sueldo bruto ${valorSelect}`}/>
-            <h2> <span className="text-white"> Resultados :</span> {Result}</h2>
+            <h2> <span className="text-white"> Resultados :</span> {state}</h2>
         </section>
     )
 }
