@@ -4,7 +4,7 @@ import { IconCalculator } from '@tabler/icons-react';
 export function Calculadora() {
     const [Entrada , setEntrada] = useState(null)
     const [Result , setResult]= useState('')
-    const [valorSelect , setValorSelect]= useState()
+    const [valorSelect , setValorSelect]= useState('Mensual')
     const [valores , setValores]= useState({
         numeroMinimo: 34700, 
         excedente: 416220.01/12 
