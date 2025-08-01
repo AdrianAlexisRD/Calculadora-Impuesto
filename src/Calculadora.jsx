@@ -9,44 +9,40 @@ export function Calculadora() {
   const [Entrada , setEntrada] = useState(null)
   const [valorSelect , setValorSelect]= useState('Mensual')
   const [state, dispatch] = useReducer(reducer, estadoInicial);
+  const [tiempo , setTiempo ] = useState(1)
 
   function reducer(state, action) {
       switch (action.type) {
         case 'option1':
           const Impuesto1 = Entrada-(416220.01/12)
-          return `RD$ ${(Impuesto1*0.15).toFixed(2)}`;
+          return (Impuesto1*0.15);
         case "option2":
             const MontoAdicional = 31216.00/12
             const Impuesto2 = Entrada-(624329.01/12)
-            return `RD$ ${(Impuesto2*0.20+(MontoAdicional)).toFixed(2)}`;
+            return (Impuesto2*0.20+(MontoAdicional));
         case "option3":
             const MontoAdicional1 = 79776.00/12
             const Impuesto3 = Entrada-(867123.01/12)
-            return `RD$ ${(Impuesto3*0.25+(MontoAdicional1)).toFixed(2)}`;
+            return (Impuesto3*0.25+(MontoAdicional1));
         default:
           return state;
       }
     }
-    console.log(reducer)
-    console.log(state)
-  // useEffect(() => {
-  //   switch (valorSelect) {
-  //     case "Anual":
-  //       setValores1({
-  //         numeroMinimo: 34700 * 12,
-  //         excedente: 416220.01,
-  //       });
-  //       break;
 
-  //     case "Mensual":
-  //     default:
-  //       setValores1({
-  //         numeroMinimo: 34700,
-  //         excedente: 416220.01 / 12,
-  //       });
-  //       break;
-  //   }
-  // }, [valorSelect]);
+    console.log(state)
+  
+  useEffect(() => {
+    switch (valorSelect) {
+      case "Anual":
+        setTiempo(12)
+        break;
+
+      case "Mensual":
+      default:
+        setTiempo(1)
+        break;
+    }
+  }, [valorSelect]);
 
 
     useEffect(()=>{
@@ -82,7 +78,7 @@ export function Calculadora() {
                 <option value="Anual">Anual</option>
             </select>
             <input className="border-2 rounded p-2 text-[15px] focus:outline-none focus:border-blue-400 " type="number" onChange={e=> setEntrada(e.target.value)}  value={Entrada} placeholder={`Coloque su sueldo bruto ${valorSelect}`}/>
-            <h2> <span className="text-white"> Resultados :</span> {state}</h2>
+          <h2> <span className="text-white"> Resultados :</span>  {Entrada < 34700? estadoInicial:`RD$ ${(state*tiempo).toFixed(2)}`}</h2>
         </section>
     )
 }
